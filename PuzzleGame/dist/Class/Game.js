@@ -1,4 +1,3 @@
-import { Direction } from "../Enums/Direction.js";
 import { Display } from "./Display.js";
 import { Player } from "./Player.js";
 function get_rand(max) {
@@ -15,8 +14,7 @@ export class Game {
     }
     test() {
         this.display.draw(this);
-        this.displacementP1();
-        this.displacementP2();
+        this.setupDisplacements();
     }
     getPlayer1() {
         return this.player1;
@@ -24,64 +22,65 @@ export class Game {
     getPlayer2() {
         return this.player2;
     }
-    displacementP1() {
+    isValidPosition(x, y) {
+        return x >= 0 && x < this.width && y >= 0 && y < this.height;
+    }
+    setupDisplacements() {
         document.addEventListener("keydown", (event) => {
-            let newX = this.player1.getX();
-            let newY = this.player1.getY();
-            let dir = null;
-            switch (event.key) {
-                case "ArrowUp":
-                    newY -= 1;
-                    dir = Direction.UP;
-                    break;
-                case "ArrowDown":
-                    newY += 1;
-                    dir = Direction.DOWN;
-                    break;
-                case "ArrowLeft":
-                    newX -= 1;
-                    dir = Direction.LEFT;
-                    break;
-                case "ArrowRight":
-                    newX += 1;
-                    dir = Direction.RIGHT;
-                    break;
-                default:
-                    return;
+            let key = event.key.toLowerCase();
+            if (event.key == "ArrowUp" || event.key === "ArrowDown" ||
+                event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                this.movePlayer1(event.key);
             }
-            this.player1.setPosition(newX, newY);
+            else if (key === "z" || key === "s" || key === "q" || key === "d") {
+                this.movePlayer2(key);
+            }
             this.display.clear();
             this.display.draw(this);
         });
     }
-    displacementP2() {
-        document.addEventListener("keydown", (event) => {
-            let newX = this.player2.getX();
-            let newY = this.player2.getY();
-            let dir = null;
-            switch (event.key) {
-                case "ArrowUp":
-                    newY -= 1;
-                    dir = Direction.UP;
-                    break;
-                case "ArrowDown":
-                    newY += 1;
-                    dir = Direction.DOWN;
-                    break;
-                case "ArrowLeft":
-                    newX -= 1;
-                    dir = Direction.LEFT;
-                    break;
-                case "ArrowRight":
-                    newX += 1;
-                    dir = Direction.RIGHT;
-                    break;
-                default:
-                    return;
-            }
+    movePlayer1(key) {
+        let newX = this.player1.getX();
+        let newY = this.player1.getY();
+        switch (key) {
+            case "ArrowUp":
+                newY -= 1;
+                break;
+            case "ArrowDown":
+                newY += 1;
+                break;
+            case "ArrowLeft":
+                newX -= 1;
+                break;
+            case "ArrowRight":
+                newX += 1;
+                break;
+        }
+        if (this.isValidPosition(newX, newY)) {
+            this.player1.setPosition(newX, newY);
+        }
+    }
+    movePlayer2(key) {
+        let newX = this.player2.getX();
+        let newY = this.player2.getY();
+        switch (key) {
+            case "z":
+                newY -= 1;
+                break;
+            case "s":
+                newY += 1;
+                break;
+            case "q":
+                newX -= 1;
+                break;
+            case "d":
+                newX += 1;
+                break;
+            default:
+                break;
+        }
+        if (this.isValidPosition(newX, newY)) {
             this.player2.setPosition(newX, newY);
-            this.display.clear();
-            this.display.draw(this);
-        });
+        }
     }
 }
