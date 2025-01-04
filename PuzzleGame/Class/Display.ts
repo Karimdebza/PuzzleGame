@@ -34,4 +34,8 @@ export class Display {
   }
 
 
+  public clear(){
+    this.drawer.clear();
+  }
+
 }

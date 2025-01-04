@@ -1,3 +1,4 @@
+import { Direction } from "../Enums/Direction.js";
 import { Display } from "./Display.js";
 
 
@@ -27,6 +28,9 @@ export class Game {
 
     public test(){
         this.display.draw(this);
+        this.displacementP1();
+        this.displacementP2();
+
     }
 
     public getPlayer1() {
@@ -38,5 +42,75 @@ export class Game {
         return this.player2;
     }
 
+    public displacementP1(): void {
+        document.addEventListener("keydown", (event) => {
+            let newX = this.player1.getX();
+            let newY = this.player1.getY();
+            let dir: Direction | null = null;
+    
+            switch (event.key) {
+                case "ArrowUp":
+                    newY -= 1;
+                    dir = Direction.UP;
+                    break;
+                case "ArrowDown":
+                    newY += 1;
+                    dir = Direction.DOWN;
+                    break;
+                case "ArrowLeft":
+                    newX -= 1;
+                    dir = Direction.LEFT;
+                    break;
+                case "ArrowRight":
+                    newX += 1;
+                    dir = Direction.RIGHT;
+                    break;
+                default:
+                    return;
+            }
+
+            this.player1.setPosition(newX, newY);
+            this.display.clear();
+            this.display.draw(this);
+        
+    });
+
+
+}
+
+public displacementP2(): void {
+    document.addEventListener("keydown", (event) => {
+        let newX = this.player2.getX();
+        let newY = this.player2.getY();
+        let dir: Direction | null = null;
+
+        switch (event.key) {
+            case "ArrowUp":
+                newY -= 1;
+                dir = Direction.UP;
+                break;
+            case "ArrowDown":
+                newY += 1;
+                dir = Direction.DOWN;
+                break;
+            case "ArrowLeft":
+                newX -= 1;
+                dir = Direction.LEFT;
+                break;
+            case "ArrowRight":
+                newX += 1;
+                dir = Direction.RIGHT;
+                break;
+            default:
+                return;
+        }
+    
+        this.player2.setPosition(newX, newY);
+        this.display.clear();
+            this.display.draw(this);
+});
+
+
+}
 
 }
