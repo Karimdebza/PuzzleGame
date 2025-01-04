@@ -42,8 +42,8 @@ export class Game {
         return this.player2;
     }
 
-    private isValidPosition(x:number, y:number){
-        return x>= 0 && x < this.width &&  y >= 0 && y < this.height;
+    private isValidPosition(x:number, y:number,otherPlayer:Player){
+        return x>= 0 && x < this.width &&  y >= 0 && y < this.height && (x !==  otherPlayer.getX() || y !== otherPlayer.getY() );
     }
 
 
@@ -74,7 +74,7 @@ export class Game {
                 case "ArrowLeft": newX -= 1; break;
                 case "ArrowRight": newX += 1; break;
             }
-            if(this.isValidPosition(newX,newY)){
+            if(this.isValidPosition(newX,newY, this.player2)){
             this.player1.setPosition(newX, newY);
             }
 
@@ -103,7 +103,7 @@ private movePlayer2(key:string){
         default:
             break;
     }
-    if(this.isValidPosition(newX,newY)){
+    if(this.isValidPosition(newX,newY, this.player1)){
         this.player2.setPosition(newX, newY);
         }
 }

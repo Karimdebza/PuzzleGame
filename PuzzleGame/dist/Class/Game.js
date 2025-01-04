@@ -22,8 +22,8 @@ export class Game {
     getPlayer2() {
         return this.player2;
     }
-    isValidPosition(x, y) {
-        return x >= 0 && x < this.width && y >= 0 && y < this.height;
+    isValidPosition(x, y, otherPlayer) {
+        return x >= 0 && x < this.width && y >= 0 && y < this.height && (x !== otherPlayer.getX() || y !== otherPlayer.getY());
     }
     setupDisplacements() {
         document.addEventListener("keydown", (event) => {
@@ -56,7 +56,7 @@ export class Game {
                 newX += 1;
                 break;
         }
-        if (this.isValidPosition(newX, newY)) {
+        if (this.isValidPosition(newX, newY, this.player2)) {
             this.player1.setPosition(newX, newY);
         }
     }
@@ -79,7 +79,7 @@ export class Game {
             default:
                 break;
         }
-        if (this.isValidPosition(newX, newY)) {
+        if (this.isValidPosition(newX, newY, this.player1)) {
             this.player2.setPosition(newX, newY);
         }
     }
