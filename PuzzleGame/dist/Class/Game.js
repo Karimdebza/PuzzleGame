@@ -1,4 +1,5 @@
 import { Display } from "./Display.js";
+import { GoldPressurePlate } from "./GoldPressurePlate.js";
 import { Player } from "./Player.js";
 function get_rand(max) {
     return Math.floor(Math.random() * max);
@@ -11,6 +12,7 @@ export class Game {
         this.level = 1;
         this.player1 = new Player(get_rand(width), get_rand(height));
         this.player2 = new Player(get_rand(width), get_rand(height));
+        this.pressurePlate = new GoldPressurePlate(get_rand(width), get_rand(height));
     }
     test() {
         this.display.draw(this);
@@ -22,8 +24,38 @@ export class Game {
     getPlayer2() {
         return this.player2;
     }
+    getGoldPressurePlate() {
+        return this.pressurePlate;
+    }
     isValidPosition(x, y, otherPlayer) {
-        return x >= 0 && x < this.width && y >= 0 && y < this.height && (x !== otherPlayer.getX() || y !== otherPlayer.getY());
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+            return false;
+        }
+        if (this.isGoldPressurePlate(x, y)) {
+            return true;
+        }
+        return (x !== otherPlayer.getX() || y !== otherPlayer.getY());
+    }
+    checkPlayersOnGoldPlate() {
+        return this.pressurePlate.getX() === this.player1.getX() &&
+            this.pressurePlate.getX() === this.player2.getX() &&
+            this.pressurePlate.getY() === this.player1.getY() &&
+            this.pressurePlate.getY() === this.player2.getY();
+    }
+    checkAndResetIfNeeded() {
+        if (this.checkPlayersOnGoldPlate()) {
+            this.resetGame();
+        }
+    }
+    resetGame() {
+        this.level += 1;
+        this.display.refreshScore();
+        this.display.clear();
+        this.display.draw(this);
+        this.player1.setX(get_rand(this.width));
+        this.player1.setY(get_rand(this.height));
+        this.player2.setX(get_rand(this.width));
+        this.player2.setY(get_rand(this.height));
     }
     setupDisplacements() {
         document.addEventListener("keydown", (event) => {
@@ -58,7 +90,11 @@ export class Game {
         }
         if (this.isValidPosition(newX, newY, this.player2)) {
             this.player1.setPosition(newX, newY);
+            this.checkAndResetIfNeeded();
         }
+    }
+    isGoldPressurePlate(x, y) {
+        return this.pressurePlate.getX() === x && this.pressurePlate.getY() === y;
     }
     movePlayer2(key) {
         let newX = this.player2.getX();
@@ -81,6 +117,7 @@ export class Game {
         }
         if (this.isValidPosition(newX, newY, this.player1)) {
             this.player2.setPosition(newX, newY);
+            this.checkAndResetIfNeeded();
         }
     }
 }

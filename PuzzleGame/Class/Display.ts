@@ -1,5 +1,6 @@
 import {Drawer} from "../Drawer.js";
 import { Game } from "./Game.js";
+import { GoldPressurePlate } from "./GoldPressurePlate.js";
 import { Player } from "./Player.js";
 
 
@@ -31,6 +32,9 @@ export class Display {
   
     const player2 : Player = game.getPlayer2();
     this.drawer.drawCircle(player2.getX(), player2.getY(),player2.getColor());
+
+    const pressurePlate : GoldPressurePlate = game.getGoldPressurePlate();
+    this.drawer.drawDiamond(pressurePlate.getX(), pressurePlate.getY(), pressurePlate.getColor());
   }
 
 

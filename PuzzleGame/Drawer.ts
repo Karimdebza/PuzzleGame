@@ -29,7 +29,7 @@ export class Drawer {
       this.ctx.fill();
     }
 
-    public drawDiamond(x: number, y: number, color: string, size = 1): void {
+    public drawDiamond(x: number, y: number, color: string, size = 2): void {
       this.ctx.beginPath();
       this.ctx.fillStyle = color;
       

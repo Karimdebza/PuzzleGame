@@ -1,4 +1,5 @@
 export enum Shape {
     CIRCLE,
-    SQUARE
+    SQUARE,
+    DAIMOND
 }

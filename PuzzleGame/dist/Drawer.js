@@ -22,7 +22,7 @@ export class Drawer {
         this.ctx.arc(x * this.scale + this.scale / 2, y * this.scale + this.scale / 2, (size * this.scale) / 2, 0, 2 * Math.PI);
         this.ctx.fill();
     }
-    drawDiamond(x, y, color, size = 1) {
+    drawDiamond(x, y, color, size = 2) {
         this.ctx.beginPath();
         this.ctx.fillStyle = color;
         const halfSize = (size * this.scale) / 2;
