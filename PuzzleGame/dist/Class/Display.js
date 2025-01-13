@@ -11,7 +11,7 @@ export class Display {
     refreshScore() {
         let score = document.getElementById("score");
         if (score != null)
-            score.innerHTML = "0";
+            score.innerHTML = "1";
     }
     draw(game) {
         const player1 = game.getPlayer1();

@@ -23,7 +23,7 @@ export class Display {
 
   public refreshScore() {
     let score: HTMLElement | null = document.getElementById("score");
-    if (score != null) score.innerHTML = "0";
+    if (score != null) score.innerHTML = "1";
   }
 
   public draw(game: Game): void { 
@@ -43,7 +43,7 @@ export class Display {
     wall.forEach(wall => {
       this.drawer.drawRectangle(wall.getX(), wall.getY(),wall.getColor());
     });
-    
+
 
 
   }

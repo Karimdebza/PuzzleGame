@@ -93,13 +93,15 @@ export class Game {
 
     private resetGame():void{
         this.level += 1;
+        if(this.levels[`level${this.level}`]){
+            this.loadLevel(this.level);
+        }else{
+            this.level = 1;
+            this.loadLevel(this.level);
+
+        }
+
         this.display.refreshScore();
-        this.display.clear();
-        this.display.draw(this);
-          this.player1.setX(get_rand(this.width));
-        this.player1.setY(get_rand(this.height));
-        this.player2.setX(get_rand(this.width));
-        this.player2.setY(get_rand(this.height));
         
     }
 
@@ -199,7 +201,7 @@ private loadLevel (levelNumber:number){
     this.pressurePlate = currentLevel.goldPlates.map(plateData => 
         new GoldPressurePlate(plateData)
     );
-
+    this.display.refreshScore();
     
     this.player1 = new Player(currentLevel.players.player1);
     this.player2 = new Player(currentLevel.players.player2);
