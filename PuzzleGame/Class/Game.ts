@@ -4,6 +4,7 @@ import { GoldPressurePlate } from "./GoldPressurePlate.js";
 
 
 import { Player } from "./Player.js";
+import { Wall } from "./Wall.js";
 function get_rand(max: number): number {
     return Math.floor(Math.random() * max);
 }
@@ -15,8 +16,10 @@ export class Game {
     private height: number;
     private display: Display;
     protected player1: Player;
+    protected walls: Wall[];
+    protected levels:any;
     protected player2: Player;
-    protected pressurePlate : GoldPressurePlate;
+    protected pressurePlate : GoldPressurePlate[];
     protected level: number;
 
     constructor(width: number, height: number, scale: number) {
@@ -24,14 +27,17 @@ export class Game {
         this.height = height;
         this.display = new Display(width, height, scale);
         this.level = 1;
-        this.player1 = new Player(get_rand(width ), get_rand(height ));
-        this.player2 = new Player(get_rand(width ), get_rand(height ));
-        this.pressurePlate = new GoldPressurePlate(get_rand(width ), get_rand(height ));
+        this.player1 = new Player({x: 0, y: 0});
+        this.player2 = new Player({x: 0, y: 0});
+        this.pressurePlate = [];
+        this.walls = [];
     }
 
     public test(){
-        this.display.draw(this);
-        this.setupDisplacements();
+        this.startGame().then(() => {
+            this.display.draw(this);
+            this.setupDisplacements();
+        });
        
 
     }
@@ -44,12 +50,19 @@ export class Game {
     public getPlayer2():Player {
         return this.player2;
     }
-    public getGoldPressurePlate(): GoldPressurePlate{
+    public getGoldPressurePlate(): GoldPressurePlate[]{
         return this.pressurePlate;
+    }
+    public getWall():Wall[]{
+        return this.walls;
     }
 
     private isValidPosition(x:number, y:number,otherPlayer:Player){
         if(x < 0 || x >= this.width || y < 0 || y >= this.height) {
+            return false;
+        }
+        
+        if(this.isCollidedWithWalls(x,y)){
             return false;
         }
 
@@ -61,11 +74,15 @@ export class Game {
         return (x !== otherPlayer.getX() || y !== otherPlayer.getY());
     }
 
-    private checkPlayersOnGoldPlate():boolean{
-        return this.pressurePlate.getX() === this.player1.getX() && 
-        this.pressurePlate.getX() === this.player2.getX() && 
-        this.pressurePlate.getY() === this.player1.getY() && 
-        this.pressurePlate.getY() === this.player2.getY();
+    private checkPlayersOnGoldPlate():boolean {
+        const plate = this.pressurePlate.find(plate => 
+            plate.getX() === this.player1.getX() && 
+            plate.getX() === this.player2.getX() && 
+            plate.getY() === this.player1.getY() && 
+            plate.getY() === this.player2.getY()
+        );
+        
+        return plate !== undefined;
     }
 
     private checkAndResetIfNeeded():void{
@@ -123,8 +140,15 @@ export class Game {
 }
 
 private isGoldPressurePlate(x:number,y:number){
-    return this.pressurePlate.getX() === x && this.pressurePlate.getY() === y; 
+    return this.pressurePlate.some(plate => plate.getX() === x && plate.getY() === y); 
 }
+
+private isCollidedWithWalls(x:number, y:number){
+
+    return this.walls.some(wall => wall.getX() === x && wall.getY() === y);
+
+}
+
 private movePlayer2(key:string){
     let newX = this.player2.getX();
     let newY = this.player2.getY();
@@ -151,6 +175,43 @@ private movePlayer2(key:string){
         this.checkAndResetIfNeeded();
         
         }
+}
+
+
+async loadLevels() {
+    try {
+        const response = await fetch('./data.json'); 
+        this.levels = await response.json();
+    } catch (error) {
+        console.error("Erreur lors du chargement des niveaux:", error);
+    }
+}
+
+private loadLevel (levelNumber:number){
+    const currentLevel = this.levels[`level${levelNumber}`] as LevelData;
+        
+   
+    this.walls = currentLevel.walls.map(wallData => 
+        new Wall(wallData)
+    );
+
+    
+    this.pressurePlate = currentLevel.goldPlates.map(plateData => 
+        new GoldPressurePlate(plateData)
+    );
+
+    
+    this.player1 = new Player(currentLevel.players.player1);
+    this.player2 = new Player(currentLevel.players.player2);
+
+    this.display.clear();
+    this.display.draw(this);
+}
+
+
+async startGame() {
+    await this.loadLevels();  
+    this.loadLevel(1);        
 }
 
 }

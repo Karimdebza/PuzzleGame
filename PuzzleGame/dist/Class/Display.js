@@ -18,8 +18,14 @@ export class Display {
         this.drawer.drawCircle(player1.getX(), player1.getY(), player1.getColor());
         const player2 = game.getPlayer2();
         this.drawer.drawCircle(player2.getX(), player2.getY(), player2.getColor());
-        const pressurePlate = game.getGoldPressurePlate();
-        this.drawer.drawDiamond(pressurePlate.getX(), pressurePlate.getY(), pressurePlate.getColor());
+        const pressurePlates = game.getGoldPressurePlate();
+        pressurePlates.forEach(plate => {
+            this.drawer.drawDiamond(plate.getX(), plate.getY(), plate.getColor());
+        });
+        const wall = game.getWall();
+        wall.forEach(wall => {
+            this.drawer.drawRectangle(wall.getX(), wall.getY(), wall.getColor());
+        });
     }
     clear() {
         this.drawer.clear();

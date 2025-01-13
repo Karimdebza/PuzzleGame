@@ -4,9 +4,8 @@ import { Point } from "./Point.js";
 
 export class GoldPressurePlate  extends Point {
 
-    constructor(x: number, y: number) {
-        super(x, y, Shape.DAIMOND, 'gold');
-
+    constructor(data: PressurePlateData) {
+        super(data.x, data.y, Shape.DAIMOND, 'gold');
     }
 
     public touched(player: Player): boolean {

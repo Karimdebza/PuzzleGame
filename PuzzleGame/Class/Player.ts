@@ -3,8 +3,8 @@ import { Point } from "./Point.js";
 import { Shape } from "../Enums/Shape.js";
 export class Player extends Point{
 
-    constructor(x:number,y:number){
-        super(x,y,Shape.CIRCLE,'green');
+    constructor(data: PlayerData){
+        super(data.x,data.y,Shape.CIRCLE,'green');
         
     }
 

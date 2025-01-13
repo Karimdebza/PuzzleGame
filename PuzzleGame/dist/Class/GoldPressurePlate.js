@@ -1,8 +1,8 @@
 import { Shape } from "../Enums/Shape.js";
 import { Point } from "./Point.js";
 export class GoldPressurePlate extends Point {
-    constructor(x, y) {
-        super(x, y, Shape.DAIMOND, 'gold');
+    constructor(data) {
+        super(data.x, data.y, Shape.DAIMOND, 'gold');
     }
     touched(player) {
         if (player.getX() === this.x && player.getY() === this.y) {

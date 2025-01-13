@@ -1,14 +1,8 @@
-import { Point } from "./Point.js";
 import { Shape } from "../Enums/Shape.js";
-export class Player extends Point {
+import { Point } from "./Point.js";
+export class Wall extends Point {
     constructor(data) {
-        super(data.x, data.y, Shape.CIRCLE, 'green');
-    }
-    getX() {
-        return this.x;
-    }
-    getY() {
-        return this.y;
+        super(data.x, data.y, Shape.SQUARE, 'black');
     }
     setX(newX) {
         this.x = newX;
