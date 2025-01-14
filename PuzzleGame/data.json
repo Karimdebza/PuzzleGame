@@ -13,7 +13,15 @@
       },
       "goldPlates": [
           {"x": 30, "y": 30}
-      ]
+      ],
+      "pressurePlate": [
+        {"x": 20, "y": 20, "doorId": "door1"},
+        {"x": 14, "y": 14, "doorId": "door2"}
+    ],
+    "door": [
+        {"x": 13, "y": 13, "id": "door1", "isOpen": false},
+        {"x": 19, "y": 19, "id": "door2", "isOpen": false}
+    ]
   },
   "level2": {
       "walls": [
@@ -30,6 +38,14 @@
       "goldPlates": [
           {"x": 6, "y": 6},
           {"x": 7, "y": 7}
-      ]
+      ],
+      "pressurePlates": [
+        {"x": 4, "y": 4, "doorId": "door1"},
+        {"x": 6, "y": 6, "doorId": "door2"}
+    ],
+    "doors": [
+        {"x": 5, "y": 3, "id": "door1", "isOpen": false},
+        {"x": 7, "y": 5, "id": "door2", "isOpen": false}
+    ]
   }
 }

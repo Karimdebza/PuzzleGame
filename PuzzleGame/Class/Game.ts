@@ -1,6 +1,8 @@
 import { Direction } from "../Enums/Direction.js";
 import { Display } from "./Display.js";
+import { Door } from "./Door.js";
 import { GoldPressurePlate } from "./GoldPressurePlate.js";
+import { PressurePlate } from "./PressurePlate.js";
 
 
 import { Player } from "./Player.js";
@@ -17,9 +19,11 @@ export class Game {
     private display: Display;
     protected player1: Player;
     protected walls: Wall[];
+    protected door: Door[];
+    protected pressurePlate: PressurePlate[];
     protected levels:any;
     protected player2: Player;
-    protected pressurePlate : GoldPressurePlate[];
+    protected pressurePlateGold : GoldPressurePlate[];
     protected level: number;
 
     constructor(width: number, height: number, scale: number) {
@@ -29,8 +33,10 @@ export class Game {
         this.level = 1;
         this.player1 = new Player({x: 0, y: 0});
         this.player2 = new Player({x: 0, y: 0});
-        this.pressurePlate = [];
+        this.pressurePlateGold = [];
         this.walls = [];
+        this.pressurePlate = [];
+        this.door = [] ;
     }
 
     public test(){
@@ -51,31 +57,61 @@ export class Game {
         return this.player2;
     }
     public getGoldPressurePlate(): GoldPressurePlate[]{
-        return this.pressurePlate;
+        return this.pressurePlateGold;
     }
     public getWall():Wall[]{
         return this.walls;
     }
+    public getPressurePlate():PressurePlate[]{
+       return this.pressurePlate;
+    }
+    public getDoor():Door[]{
+        return this.door;
+    }
 
     private isValidPosition(x:number, y:number,otherPlayer:Player){
-        if(x < 0 || x >= this.width || y < 0 || y >= this.height) {
-            return false;
-        }
+      
+    if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+        return false;
+    }
+    
+   
+    if (this.isCollidedWithWalls(x, y)) {
+        return false;
+    }
+
+   
+    if (this.isCollidedWithClosedDoors(x, y)) {
+        return false;
+    }
+
+
+    if (this.isGoldPressurePlate(x, y)) {
+        return true;
+    }
+    if (this.isPressurePlate(x,y)) {
+        return true;
+    }
         
-        if(this.isCollidedWithWalls(x,y)){
-            return false;
-        }
-
-        if(this.isGoldPressurePlate(x,y)){
-
-            return true;
-        }
 
         return (x !== otherPlayer.getX() || y !== otherPlayer.getY());
     }
 
+    private isCollidedWithClosedDoors(x: number, y: number): boolean {
+        return this.door.some(door => 
+            !door.isOpened() && 
+            door.getX() === x && 
+            door.getY() === y
+        );
+    }
+    private isPressurePlate(x: number, y: number): boolean {
+        return this.pressurePlate.some(plate => 
+            plate.getX() === x && 
+            plate.getY() === y
+        );
+     }
     private checkPlayersOnGoldPlate():boolean {
-        const plate = this.pressurePlate.find(plate => 
+        const plate = this.pressurePlateGold.find(plate => 
             plate.getX() === this.player1.getX() && 
             plate.getX() === this.player2.getX() && 
             plate.getY() === this.player1.getY() && 
@@ -135,6 +171,7 @@ export class Game {
             if(this.isValidPosition(newX,newY, this.player2)){
             this.player1.setPosition(newX, newY);
             this.checkAndResetIfNeeded();
+            this.activatePlatePressure();
             }
 
 
@@ -142,7 +179,7 @@ export class Game {
 }
 
 private isGoldPressurePlate(x:number,y:number){
-    return this.pressurePlate.some(plate => plate.getX() === x && plate.getY() === y); 
+    return this.pressurePlateGold.some(plate => plate.getX() === x && plate.getY() === y); 
 }
 
 private isCollidedWithWalls(x:number, y:number){
@@ -175,7 +212,7 @@ private movePlayer2(key:string){
     if(this.isValidPosition(newX,newY, this.player1)){
         this.player2.setPosition(newX, newY);
         this.checkAndResetIfNeeded();
-        
+        this.activatePlatePressure();
         }
 }
 
@@ -198,8 +235,17 @@ private loadLevel (levelNumber:number){
     );
 
     
-    this.pressurePlate = currentLevel.goldPlates.map(plateData => 
+    this.pressurePlateGold = currentLevel.goldPlates.map(plateData => 
         new GoldPressurePlate(plateData)
+    );
+
+    this.door = currentLevel.door.map(doorData => 
+        new Door(doorData)
+    );
+
+    
+    this.pressurePlate = currentLevel.pressurePlate.map(plateData => 
+        new PressurePlate(plateData)
     );
     this.display.refreshScore();
     
@@ -216,4 +262,34 @@ async startGame() {
     this.loadLevel(1);        
 }
 
+ private activatePlatePressure():void{
+    for (const plate of this.pressurePlate) {
+        //je passe mes plate a la methode de verification si ya un player dessus 
+        const isPlayerOnPlate = this.isPlayerOnPressurePlate(plate);
+        //je verifie si je le jouer et dessus et et la plate n'est pas deja actif 
+        if(isPlayerOnPlate && !plate.isActive()){
+            plate.press();
+            this.openDoor(plate.getDoorId());
+        }else if(!isPlayerOnPlate && plate.isActive()){
+            plate.release();
+            this.closeDoor(plate.getDoorId());
+        }
+    }
+}
+private isPlayerOnPressurePlate(plate: PressurePlate): boolean {
+    return (
+        (this.player1.getX() === plate.getX() && this.player1.getY() === plate.getY()) ||
+        (this.player2.getX() === plate.getX() && this.player2.getY() === plate.getY())
+    );
+}
+
+private openDoor(doorId:string):void{
+    const door  = this.door.find(d => d.getId() === doorId);
+    if(door) door.open();
+}
+
+private closeDoor(doorId: string): void {
+    const door = this.door.find(d => d.getId() === doorId);
+    if (door) door.close();
+}
 }

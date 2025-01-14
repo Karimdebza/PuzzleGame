@@ -1,6 +1,8 @@
 import {Drawer} from "../Drawer.js";
+import { Door } from "./Door.js";
 import { Game } from "./Game.js";
 import { GoldPressurePlate } from "./GoldPressurePlate.js";
+import { PressurePlate } from "./PressurePlate.js";
 import { Player } from "./Player.js";
 import { Wall } from "./Wall.js";
 
@@ -34,8 +36,8 @@ export class Display {
     const player2 : Player = game.getPlayer2();
     this.drawer.drawCircle(player2.getX(), player2.getY(),player2.getColor());
 
-    const pressurePlates: GoldPressurePlate[] = game.getGoldPressurePlate();
-    pressurePlates.forEach(plate => {
+    const goldPressurePlate: GoldPressurePlate[] = game.getGoldPressurePlate();
+    goldPressurePlate.forEach(plate => {
         this.drawer.drawDiamond(plate.getX(), plate.getY(), plate.getColor());
     });
 
@@ -44,7 +46,16 @@ export class Display {
       this.drawer.drawRectangle(wall.getX(), wall.getY(),wall.getColor());
     });
 
+    const platePressure : PressurePlate[] = game.getPressurePlate(); 
+    platePressure.forEach(plate => {
+      this.drawer.drawDiamond(plate.getX(), plate.getY(), plate.getColor());
+    })
 
+    const door : Door[] = game.getDoor();
+
+    door.forEach(door => {
+      this.drawer.drawRectangle(door.getX(),door.getY(),door.getColor());
+    })
 
   }
 

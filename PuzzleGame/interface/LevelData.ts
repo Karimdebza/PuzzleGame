@@ -5,4 +5,6 @@ interface LevelData {
         player2: PlayerData;
     };
     goldPlates: PressurePlateData[];
+    pressurePlate:PressurePlateData[];
+    door:DoorData[];
 }
