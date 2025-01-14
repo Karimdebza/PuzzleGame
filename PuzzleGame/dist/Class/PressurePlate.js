@@ -2,7 +2,7 @@ import { Shape } from "../Enums/Shape.js";
 import { Point } from "./Point.js";
 export class PressurePlate extends Point {
     constructor(data) {
-        super(data.x, data.y, Shape.DAIMOND, "gray");
+        super(data.x, data.y, Shape.DAIMOND, data.color);
         this.isPressed = false;
         this.doorId = data.doorId;
     }

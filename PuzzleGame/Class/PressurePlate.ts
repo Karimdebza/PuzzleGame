@@ -6,7 +6,7 @@ export class PressurePlate  extends Point {
     protected doorId: string;
     protected isPressed: boolean = false;
     constructor(data: PressurePlateData) {
-        super(data.x, data.y, Shape.DAIMOND, "gray");
+        super(data.x, data.y, Shape.DAIMOND, data.color);
         this.doorId = data.doorId;
     }
 
