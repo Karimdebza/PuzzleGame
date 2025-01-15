@@ -7,11 +7,13 @@ export class Display {
         this.scale = scale;
         canvas.width = width * this.scale;
         canvas.height = height * this.scale;
+        this.refreshScore(1);
     }
-    refreshScore() {
+    refreshScore(level) {
         let score = document.getElementById("score");
-        if (score != null)
-            score.innerHTML = "1";
+        if (score != null) {
+            score.innerHTML = `Niveau ${level}`;
+        }
     }
     draw(game) {
         const player1 = game.getPlayer1();

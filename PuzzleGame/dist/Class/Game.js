@@ -11,14 +11,15 @@ export class Game {
     constructor(width, height, scale) {
         this.width = width;
         this.height = height;
-        this.display = new Display(width, height, scale);
         this.level = 1;
+        this.display = new Display(width, height, scale);
         this.player1 = new Player({ x: 0, y: 0 });
         this.player2 = new Player({ x: 0, y: 0 });
         this.pressurePlateGold = [];
         this.walls = [];
         this.pressurePlate = [];
         this.door = [];
+        this.display.refreshScore(this.level);
     }
     test() {
         this.startGame().then(() => {
@@ -84,15 +85,11 @@ export class Game {
         }
     }
     resetGame() {
-        this.level += 1;
-        if (this.levels[`level${this.level}`]) {
-            this.loadLevel(this.level);
-        }
-        else {
-            this.level = 1;
-            this.loadLevel(this.level);
-        }
-        this.display.refreshScore();
+        this.level += 1; // Incrémente le niveau
+        this.display.refreshScore(this.level); // Met à jour l'affichage du niveau
+        this.loadLevel(this.level); // Charge les données du nouveau niveau
+        this.display.clear();
+        this.display.draw(this);
     }
     setupDisplacements() {
         document.addEventListener("keydown", (event) => {
@@ -177,7 +174,6 @@ export class Game {
         this.pressurePlateGold = currentLevel.goldPlates.map(plateData => new GoldPressurePlate(plateData));
         this.door = currentLevel.door.map(doorData => new Door(doorData));
         this.pressurePlate = currentLevel.pressurePlate.map(plateData => new PressurePlate(plateData));
-        this.display.refreshScore();
         this.player1 = new Player(currentLevel.players.player1);
         this.player2 = new Player(currentLevel.players.player2);
         this.display.clear();

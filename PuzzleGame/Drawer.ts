@@ -15,7 +15,7 @@ export class Drawer {
       this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
   
-    public drawRectangle(x: number, y: number, color: string, size = 1):void {
+    public drawRectangle(x: number, y: number, color: string, size = 0.9):void {
       this.ctx.beginPath();
       this.ctx.fillStyle = color;
       const width = size * this.scale;

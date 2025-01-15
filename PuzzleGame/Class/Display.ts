@@ -12,21 +12,26 @@ export class Display {
   private scale: number;
   private drawer: Drawer;
 
+
   constructor(width: number, height: number, scale: number = 10) {
     this.drawer = new Drawer(width, height, scale);
     const canvas = document.createElement("canvas");
     this.ctx = canvas.getContext("2d");
-
+    
     this.scale = scale;
     canvas.width = width * this.scale;
     canvas.height = height * this.scale;
+    this.refreshScore(1);
     
   }
 
-  public refreshScore() {
+  public refreshScore(level:number) {
     let score: HTMLElement | null = document.getElementById("score");
-    if (score != null) score.innerHTML = "1";
-  }
+    if (score != null) {
+        score.innerHTML = `Niveau ${level}`; 
+    }
+}
+
 
   public draw(game: Game): void { 
     

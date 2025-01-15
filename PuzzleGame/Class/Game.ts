@@ -29,14 +29,16 @@ export class Game {
     constructor(width: number, height: number, scale: number) {
         this.width = width;
         this.height = height;
-        this.display = new Display(width, height, scale);
         this.level = 1;
+        this.display = new Display(width, height, scale);
+       
         this.player1 = new Player({x: 0, y: 0});
         this.player2 = new Player({x: 0, y: 0});
         this.pressurePlateGold = [];
         this.walls = [];
         this.pressurePlate = [];
         this.door = [] ;
+        this.display.refreshScore(this.level);
     }
 
     public test(){
@@ -128,16 +130,13 @@ export class Game {
     }
 
     private resetGame():void{
-        this.level += 1;
-        if(this.levels[`level${this.level}`]){
-            this.loadLevel(this.level);
-        }else{
-            this.level = 1;
-            this.loadLevel(this.level);
+        this.level += 1;  // Incrémente le niveau
+    this.display.refreshScore(this.level);  // Met à jour l'affichage du niveau
+    this.loadLevel(this.level);  // Charge les données du nouveau niveau
+    this.display.clear();
+    this.display.draw(this);
 
-        }
-
-        this.display.refreshScore();
+        
         
     }
 
@@ -217,7 +216,7 @@ private movePlayer2(key:string){
 }
 
 
-async loadLevels() {
+private async loadLevels() {
     try {
         const response = await fetch('./data.json'); 
         this.levels = await response.json();
@@ -247,7 +246,7 @@ private loadLevel (levelNumber:number){
     this.pressurePlate = currentLevel.pressurePlate.map(plateData => 
         new PressurePlate(plateData)
     );
-    this.display.refreshScore();
+ 
     
     this.player1 = new Player(currentLevel.players.player1);
     this.player2 = new Player(currentLevel.players.player2);
@@ -257,7 +256,7 @@ private loadLevel (levelNumber:number){
 }
 
 
-async startGame() {
+ private async startGame() {
     await this.loadLevels();  
     this.loadLevel(1);        
 }
