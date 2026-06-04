@@ -4,88 +4,95 @@
 
 # 🧩 PuzzleGame
 
-> Jeu de puzzle 2D coopératif — projet de cours réalisé en 2025
+# PuzzleGame — 2D Cooperative Puzzle Game in TypeScript
 
+> A 2-player cooperative puzzle game built with TypeScript OOP and Canvas API. Players must synchronize their actions to solve pressure-plate puzzles and unlock doors.
 
-## À propos
+**[Play →](https://karimdebza.github.io/PuzzleGame)**
 
-Projet réalisé seul dans le cadre d'un cours de programmation orientée objet en TypeScript. L'objectif était de construire un jeu de puzzle 2D jouable à deux sur le même clavier, avec des mécaniques progressives introduites niveau par niveau.
+---
 
-**Chantier en cours** — le projet évolue encore. Les niveaux 1 à 4 sont jouables. Le multijoueur en ligne (niveau 5) est en cours de conception.
+## Overview
 
-## Gameplay
+PuzzleGame is a browser-based 2D game focused on object-oriented design. Every game element — players, doors, pressure plates, levels — is modeled as a class with clear responsibilities. Levels are defined in JSON, making the game data-driven and easy to extend.
 
-Deux joueurs doivent collaborer pour atteindre la **plaque dorée** simultanément et passer au niveau suivant.
-
-| Joueur | Contrôles |
-|--------|-----------|
-| Joueur 1 | ← → ↑ ↓ (flèches) |
-| Joueur 2 | Z Q S D |
-
-### Mécaniques
-
-- **Murs** — bloquent le passage
-- **Plaques de pression** — s'activent quand un joueur se tient dessus
-- **Portes** — liées aux plaques, s'ouvrent et se referment en temps réel
-- **Plaque dorée** — objectif final, les deux joueurs doivent y être simultanément
-
-## Stack technique
-
-- **TypeScript** — logique de jeu orientée objet
-- **Canvas API** — rendu 2D
-- **ES Modules** — architecture modulaire
-- **JSON** — définition des niveaux (murs, portes, plaques, positions)
-
-## Lancer le projet
-
-```bash
-# Cloner le repo
-git clone https://github.com/Karimdebza/PuzzleGame.git
-cd PuzzleGame
-
-# Compiler le TypeScript
-npm install -g typescript
-tsc
-
-# Ouvrir index.html avec Live Server (VS Code)
-# ou servir localement :
-npx serve .
-```
+---
 
 ## Architecture
 
+The codebase is structured around a strict class hierarchy:
+
 ```
-PuzzleGame/
-├── Class/
-│   ├── Game.ts            # Logique principale, gestion des niveaux
-│   ├── Player.ts          # Déplacement et position des joueurs
-│   ├── Wall.ts            # Obstacles
-│   ├── Door.ts            # Portes liées aux plaques
-│   ├── PressurePlate.ts   # Plaques de pression
-│   ├── GoldPressurePlate.ts # Plaque de fin de niveau
-│   └── Display.ts         # Rendu Canvas
-├── Enums/
-│   ├── Direction.ts
-│   └── Shape.ts
-├── Levels/                # Niveaux définis en SVG
-│   ├── lv0.svg → lv5.svg
-├── data.json              # Données des niveaux
-├── PuzzleGame.ts          # Point d'entrée
-└── index.html
+Game
+├── InputHandler      — keyboard event management
+├── Renderer          — Canvas 2D draw loop
+├── LevelLoader       — parses JSON level definitions
+└── Level
+    ├── Player (x2)   — movement, collision, state
+    ├── PressurePlate — activation logic
+    ├── Door          — opens when all plates activated
+    └── TileMap       — grid-based collision layer
 ```
 
-## Roadmap
+**Key design decisions:**
+- **No game framework** — pure TypeScript + Canvas API, no Phaser or similar
+- **Data-driven levels** — each level is a JSON file with tile layout, entity positions, and win conditions
+- **Event-driven input** — `InputHandler` decouples keyboard events from player logic
+- **Cooperative mechanic** — both players must stand on all pressure plates simultaneously to open doors
 
-- [x] Déplacement 2 joueurs
-- [x] Gestion des murs
-- [x] Plaques de pression + portes
-- [x] 6 niveaux jouables
-- [ ] Écran d'accueil et menu
-- [ ] Animations de transition
-- [ ] Sons (Web Audio API)
-- [ ] Multijoueur en ligne (WebSocket)
-- [ ] Mobile (touch controls)
+---
 
+## Class overview
+
+```typescript
+class Player {
+  constructor(x: number, y: number, controls: Controls) {}
+  update(input: InputState, tiles: TileMap): void {}
+  draw(ctx: CanvasRenderingContext2D): void {}
+}
+
+class PressurePlate {
+  isActivated(players: Player[]): boolean {}
+}
+
+class Door {
+  update(plates: PressurePlate[]): void {} // opens when all plates active
+}
+
+class Game {
+  private loop(timestamp: number): void {} // requestAnimationFrame loop
+}
+```
+
+---
+
+## Tech Stack
+
+| | Technology |
+|---|---|
+| Language | TypeScript |
+| Rendering | Canvas 2D API |
+| Build | Vite |
+| Deployment | GitHub Pages |
+
+---
+
+## Local setup
+
+```bash
+git clone https://github.com/Karimdebza/PuzzleGame.git
+cd PuzzleGame/PuzzleGame
+npm install
+npm run dev
+```
+
+---
+
+## Controls
+
+| Player 1 | Player 2 |
+|---|---|
+| Arrow keys | ZQSD |
 ---
 
 Réalisé par [Karim Debza](https://github.com/Karimdebza) — 2025
